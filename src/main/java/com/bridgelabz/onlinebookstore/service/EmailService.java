@@ -30,5 +30,4 @@ public class EmailService  {
 		mailMessage.setText(emailDTO.getMessage());
 		mailSender.send(mailMessage);
 	}
-
 }

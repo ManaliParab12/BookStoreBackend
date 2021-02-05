@@ -47,6 +47,35 @@ public class UserService implements IUserService {
 	     return new ResponseDTO("User Registered successfully");
 	}
 	 
+		@Override
+		public ResponseDTO verificationMail(User user) {
+			String token = Token.generateToken(user.getId());
+			//	emailService.sendMail(user.getEmail(), "verification ", getVerificationURL(token));
+				rabbitTemplate.convertAndSend(bind.getExchange(), bind.getRoutingKey()
+					,gson.toJson(new EmailDTO(user.getEmail(), "verification Link ", getVerificationURL(token))));
+				return new ResponseDTO("verification mail sent");
+		}
+		
+		@Override
+		public ResponseDTO verifyUser(String token) {
+			int userId = Token.decodeToken(token);
+			User user = userRepository.findById(userId).get();
+			user.setVerify(true);
+			userRepository.save(user);
+			return ResponseDTO.getResponse("Verified Successfully", user);
+		}
+
+		@Override
+		public ResponseDTO userLogin(UserDTO userDTO) {
+			User user = userRepository.findByEmail(userDTO.getEmail())
+					.orElseThrow(() -> new UserException("User Not Found"));
+			//String token = Token.generateToken(user.getId());
+			if(bCryptPasswordEncoder.matches(userDTO.getPassword(), user.getPassword()) && user.isVerify())
+				return new ResponseDTO("login Successfull");
+			throw new UserException("User not Verified");
+		}
+
+	 
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
@@ -73,33 +102,6 @@ public class UserService implements IUserService {
         return ResponseDTO.getResponse("User Deleted", user);
     }
 	
-	@Override
-	public ResponseDTO verificationMail(User user) {
-		String token = Token.generateToken(user.getId());
-		//	emailService.sendMail(user.getEmail(), "verification ", getVerificationURL(token));
-			rabbitTemplate.convertAndSend(bind.getExchange(), bind.getRoutingKey()
-				,gson.toJson(new EmailDTO(user.getEmail(), "verification Link ", getVerificationURL(token))));
-			return new ResponseDTO("verification mail sent");
-	}
-	
-	@Override
-	public ResponseDTO verifyUser(String token) {
-		int userId = Token.decodeToken(token);
-		User user = userRepository.findById(userId).get();
-		user.setVerify(true);
-		userRepository.save(user);
-		return ResponseDTO.getResponse("Verified Successfully", user);
-	}
-
-	@Override
-	public ResponseDTO userLogin(UserDTO userDTO) {
-		User user = userRepository.findByEmail(userDTO.getEmail())
-				.orElseThrow(() -> new UserException("User Not Found"));
-		//String token = Token.generateToken(user.getId());
-		if(bCryptPasswordEncoder.matches(userDTO.getPassword(), user.getPassword()) && user.isVerify())
-			return new ResponseDTO("login Successfull");
-		throw new UserException("User not Verified");
-	}
 
 	private String getVerificationURL(String token) {
 		System.out.println("token " +token);
