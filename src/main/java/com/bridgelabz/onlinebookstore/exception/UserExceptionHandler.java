@@ -36,4 +36,18 @@ public class UserExceptionHandler {
                                                  exception.getMessage());
         return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST); 
     }
+    
+    @ExceptionHandler(BookException.class)
+    public ResponseEntity<ResponseDTO> handleBookException(
+    									BookException exception ) {
+        ResponseDTO responseDTO = new ResponseDTO(exception.getMessage());
+        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST); 
+    }
+    
+    @ExceptionHandler(CartException.class)
+    public ResponseEntity<ResponseDTO> handleCartException(
+    									CartException exception ) {
+        ResponseDTO responseDTO = new ResponseDTO(exception.getMessage());
+        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST); 
+    }
 }

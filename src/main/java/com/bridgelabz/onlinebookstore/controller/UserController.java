@@ -55,8 +55,7 @@ public class UserController {
 		ResponseDTO responseDTO = userService.userLogin(userDTO);
 		 return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);		
 	}
-	
-	
+		
 	@GetMapping("/verify/{token}")
 	public ResponseEntity<ResponseDTO> verifyUser(@RequestHeader String token){
         return new ResponseEntity<ResponseDTO>(userService.verifyUser(token), HttpStatus.OK);		

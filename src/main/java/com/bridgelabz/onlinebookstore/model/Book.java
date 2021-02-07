@@ -37,7 +37,7 @@ public @Data class Book {
 	private double bookPrice;
 	
 	@CsvBindByName(column = "description")
-	@Lob
+	@Column(length = 3000) 
 	private String bookDescription;
 	
 

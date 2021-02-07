@@ -1,11 +1,11 @@
 package com.bridgelabz.onlinebookstore.service;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,11 @@ import com.bridgelabz.onlinebookstore.utility.Token;
 import com.google.gson.Gson;
 
 @Service
+@PropertySource("classpath:status.properties")
 public class UserService implements IUserService {
+	
+	@Autowired
+	private Environment environment;
 	
 	 @Autowired
 	 private UserRepository userRepository;
@@ -43,41 +47,45 @@ public class UserService implements IUserService {
 	    	 throw new UserException("User is Already Registered with this Email Id");
 	     user.setPassword(password);
 	     userRepository.save(user);
-	     verificationMail(user);	     
-	     return new ResponseDTO("User Registered successfully");
+	     if(user.isVerify()) {
+	    	 verificationMail(user);
+	    	 return new ResponseDTO("Registration successful, And verification link has been sent to your email id: " +user.getEmail());
+	     } else {
+	    	 return new ResponseDTO("Registration has been Faild");
+	     }
 	}
 	 
 		@Override
 		public ResponseDTO verificationMail(User user) {
 			String token = Token.generateToken(user.getId());
-			//	emailService.sendMail(user.getEmail(), "verification ", getVerificationURL(token));
 				rabbitTemplate.convertAndSend(bind.getExchange(), bind.getRoutingKey()
 					,gson.toJson(new EmailDTO(user.getEmail(), "verification Link ", getVerificationURL(token))));
-				return new ResponseDTO("verification mail sent");
+				return new ResponseDTO("verification link has been sent to your registered email id : " +user.getEmail());
 		}
 		
 		@Override
 		public ResponseDTO verifyUser(String token) {
 			int userId = Token.decodeToken(token);
-			User user = userRepository.findById(userId).get();
+			User user = userRepository.findById(userId)
+					.orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
 			user.setVerify(true);
 			userRepository.save(user);
 			return ResponseDTO.getResponse("Verified Successfully", user);
 		}
 
-		@Override
-		public ResponseDTO userLogin(UserDTO userDTO) {
-			User user = userRepository.findByEmail(userDTO.getEmail())
-					.orElseThrow(() -> new UserException("User Not Found"));
-			//String token = Token.generateToken(user.getId());
-			if(bCryptPasswordEncoder.matches(userDTO.getPassword(), user.getPassword()) && user.isVerify())
-				return new ResponseDTO("login Successfull");
-			throw new UserException("User not Verified");
-		}
-
+	@Override
+	public ResponseDTO userLogin(UserDTO userDTO) {
+		User user = userRepository.findByEmail(userDTO.getEmail())
+					.orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
+		if(bCryptPasswordEncoder.matches(userDTO.getPassword(), user.getPassword()) && user.isVerify())
+			return new ResponseDTO(environment.getProperty("status.login.message"));
+		throw new UserException(("Identity Verification, Action Required!"));
+	}
 	 
-	public Optional<User> getUserByEmail(String email) {
-		return userRepository.findByEmail(email);
+	public ResponseDTO getUserByEmail(String email) {
+		userRepository.findByEmail(email)
+					  .orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
+		 return new ResponseDTO("User Details");
 	}
 	
 	
@@ -89,17 +97,19 @@ public class UserService implements IUserService {
 	
 	@Override
 	public ResponseDTO updateUser(String email, UserDTO userDTO) {
-		 User user = userRepository.findByEmail(email).get();
+		 User user = userRepository.findByEmail(email)
+				 				   .orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
 		 user.updateUser(userDTO);
 	     userRepository.save(user);
-	     return ResponseDTO.getResponse("User Details updated", user);	     
+	     return ResponseDTO.getResponse("Record updated successfully", user);	     
 	}
 	
 	@Override
     public ResponseDTO deleteUser(String email) {
-        User user = this.getUserByEmail(email).get();
+        User user =  userRepository.findByEmail(email)      		
+        						   .orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
         userRepository.delete(user);
-        return ResponseDTO.getResponse("User Deleted", user);
+        return ResponseDTO.getResponse("Record has been successfully deleted", user);
     }
 	
 
@@ -114,12 +124,11 @@ public class UserService implements IUserService {
 	@Override
 	public ResponseDTO forgetPassword(String email) {
 		User user = userRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("User Not Found"));
+				.orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
 		String token = Token.generateToken(user.getId());
-		//emailService.sendMail(user.getEmail(), "verification ",resetURL(token));
 		rabbitTemplate.convertAndSend(bind.getExchange(), bind.getRoutingKey()
 				,gson.toJson(new EmailDTO(user.getEmail(), "Reset Password Link ",  resetURL(token))));
-		return new ResponseDTO("Reset Password link sent to your registered email id" );
+		return new ResponseDTO("Reset Password link has been sent to your registered email id : " +user.getEmail());
 	}
 
 	
@@ -132,10 +141,12 @@ public class UserService implements IUserService {
 	
 	@Override
 	public ResponseDTO updatePassword(String token, UserDTO userDTO) {
+		String password = bCryptPasswordEncoder.encode(userDTO.getPassword());
 		int userId = Token.decodeToken(token);
-		User user = userRepository.findById(userId).get();
-		user.setPassword(userDTO.password);
+		User user = userRepository.findById(userId)
+								  .orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
+		user.setPassword(password);
 		userRepository.save(user);
-		return ResponseDTO.getResponse("Password Changed successfully", user);
+		return ResponseDTO.getResponse("Your password has been changed successfully!", user);
 	}	
 }
