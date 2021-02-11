@@ -35,4 +35,9 @@ public class OrderService implements IOrderService {
 	public List<Order> getUserOrders(String email) {
 	    return orderRepository.findAllOrdersByUser(userRepository.findByEmail(email).get());
 	}
+	
+	@Override
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
 }

@@ -34,8 +34,4 @@ public class RabbitmqConfiguration {
 	public Binding createRoutingKey(Queue queue, DirectExchange exchangeType) {
 		return BindingBuilder.bind(queue).to(exchangeType).with(routingKey);
 	}
-	
-	
-	
-
 }

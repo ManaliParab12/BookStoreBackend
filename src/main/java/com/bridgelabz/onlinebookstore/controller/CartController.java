@@ -62,10 +62,10 @@ public class CartController {
 //	    return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 //	}
 	
-	 @DeleteMapping("/empty-cart")
-	 public ResponseEntity<ResponseDTO> removeAllBooksFromCart(@RequestHeader("Email") String email) {
-		 ResponseDTO responseDTO = cartService.removeAllBooksFromCart(email);
-		 return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
-	        
-	 }
+//	 @DeleteMapping("/empty-cart")
+//	 public ResponseEntity<ResponseDTO> removeAllBooksFromCart(@RequestHeader("Email") String email) {
+//		 ResponseDTO responseDTO = cartService.removeAllBooksFromCart(email);
+//		 return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+//	        
+//	 }
 }

@@ -11,12 +11,12 @@ import java.util.List;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +38,7 @@ public class UserController {
 	@GetMapping("/get")
 	public ResponseEntity<ResponseDTO> getUser() {
 		 List<User> userList = userService.getAllUser();
+		 System.out.println("caching");
 	     ResponseDTO responseDTO = new ResponseDTO("List of Users", userList);
 	     return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
@@ -57,12 +58,12 @@ public class UserController {
 	}
 		
 	@GetMapping("/verify/{token}")
-	public ResponseEntity<ResponseDTO> verifyUser(@RequestHeader String token){
+	public ResponseEntity<ResponseDTO> verifyUser(@RequestHeader ("Token") String token){
         return new ResponseEntity<ResponseDTO>(userService.verifyUser(token), HttpStatus.OK);		
 	}
 	
 	@PutMapping("/update/{email}")
-	public ResponseEntity<ResponseDTO> updateUser(@Valid @PathVariable ("email") String email, UserDTO userDTO) {
+	public ResponseEntity<ResponseDTO> updateUser(@Valid @RequestParam ("email") String email, UserDTO userDTO) {
 		 ResponseDTO responseDTO = userService.updateUser(email, userDTO);
 	     return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
@@ -74,12 +75,12 @@ public class UserController {
 	 } 
 
 	@PostMapping("/reset-password/{token}")
-	public ResponseEntity<ResponseDTO> resetPassword(@RequestHeader String token, @RequestBody UserDTO userDTO ) {
+	public ResponseEntity<ResponseDTO> resetPassword(@RequestHeader ("Token") String token, @RequestBody UserDTO userDTO ) {
 		return new ResponseEntity<ResponseDTO>(userService.updatePassword(token, userDTO), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/remove/{email}")
-	public ResponseEntity<ResponseDTO> removeUser(@PathVariable ("email") String email) {
+	public ResponseEntity<ResponseDTO> removeUser(@RequestParam ("email") String email) {
 		ResponseDTO responseDTO = userService.deleteUser(email);
 	    return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}

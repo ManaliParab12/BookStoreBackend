@@ -21,6 +21,6 @@ public interface ICartService {
 	
 //	ResponseDTO  removeAllBooksFromCart(String token);
 
-	ResponseDTO removeAllBooksFromCart(String email);
+//	ResponseDTO removeAllBooksFromCart(String email);
 	
 }

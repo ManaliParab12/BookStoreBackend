@@ -12,4 +12,6 @@ public interface IOrderService {
 
 	List<Order> getUserOrders(String email);
 
+	List<Order> getAllOrders();
+
 }

@@ -1,11 +1,15 @@
 package com.bridgelabz.onlinebookstore.service;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,7 @@ import com.google.gson.Gson;
 
 @Service
 @PropertySource("classpath:status.properties")
+@CacheConfig(cacheNames = {"User"})
 public class UserService implements IUserService {
 	
 	@Autowired
@@ -40,6 +45,7 @@ public class UserService implements IUserService {
 	 @Autowired
 	 private BCryptPasswordEncoder bCryptPasswordEncoder;
 	 
+	 
 	 public ResponseDTO registerUser(UserDTO userDTO) throws UserException {
 		 String password = bCryptPasswordEncoder.encode(userDTO.getPassword());
 		 User user = new User(userDTO);
@@ -47,12 +53,8 @@ public class UserService implements IUserService {
 	    	 throw new UserException("User is Already Registered with this Email Id");
 	     user.setPassword(password);
 	     userRepository.save(user);
-	     if(user.isVerify()) {
 	    	 verificationMail(user);
-	    	 return new ResponseDTO("Registration successful, And verification link has been sent to your email id: " +user.getEmail());
-	     } else {
-	    	 return new ResponseDTO("Registration has been Faild");
-	     }
+	    	 return new ResponseDTO("Registration successful, verification link has been sent to your email id: " , user.getEmail());
 	}
 	 
 		@Override
@@ -63,14 +65,14 @@ public class UserService implements IUserService {
 				return new ResponseDTO("verification link has been sent to your registered email id : " +user.getEmail());
 		}
 		
-		@Override
-		public ResponseDTO verifyUser(String token) {
-			int userId = Token.decodeToken(token);
-			User user = userRepository.findById(userId)
-					.orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
-			user.setVerify(true);
-			userRepository.save(user);
-			return ResponseDTO.getResponse("Verified Successfully", user);
+	@Override
+	public ResponseDTO verifyUser(String token) {
+		int userId = Token.decodeToken(token);
+		User user = userRepository.findById(userId)
+								  .orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
+		user.setVerify(true);
+		userRepository.save(user);
+		return ResponseDTO.getResponse("Verified Successfully", user);
 		}
 
 	@Override
@@ -81,7 +83,8 @@ public class UserService implements IUserService {
 			return new ResponseDTO(environment.getProperty("status.login.message"));
 		throw new UserException(("Identity Verification, Action Required!"));
 	}
-	 
+	
+//	@Cacheable(key = "#email")
 	public ResponseDTO getUserByEmail(String email) {
 		userRepository.findByEmail(email)
 					  .orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message")));
@@ -90,7 +93,11 @@ public class UserService implements IUserService {
 	
 	
 	@Override
+//	@Scheduled(cron = "0/5 * * * * * ")
+	@Cacheable
 	public  List<User> getAllUser() {
+//		System.out.println("Testing cron" +new Date());
+		System.out.println("Getting user data from DB");
 		return userRepository.findAll();
 	}
 
@@ -103,6 +110,7 @@ public class UserService implements IUserService {
 	     userRepository.save(user);
 	     return ResponseDTO.getResponse("Record updated successfully", user);	     
 	}
+	
 	
 	@Override
     public ResponseDTO deleteUser(String email) {

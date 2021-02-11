@@ -15,6 +15,7 @@ public class EmailService  {
 
 	@Autowired
 	JavaMailSender mailSender;
+	
 	@Autowired
 	Gson gson;
 	

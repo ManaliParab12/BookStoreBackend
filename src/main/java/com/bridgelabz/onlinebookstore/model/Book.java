@@ -15,7 +15,7 @@ import lombok.Data;
 
 @Entity
 @Table(name = "book")
-public @Data class Book {
+public @Data  class Book {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,6 +39,8 @@ public @Data class Book {
 	@CsvBindByName(column = "description")
 	@Column(length = 3000) 
 	private String bookDescription;
+	
+	private String elasticId;
 	
 
 	public Book() { }
