@@ -69,6 +69,25 @@ public class BookService implements IBookService {
 		List<Book> books = bookRepository.findAll();
 		return books;
 	}
+	
+	
+	@Override
+	public List<Book> getBookByAuthor(String bookAuthor) {
+		List<Book> books = bookRepository.findByBookAuthor(bookAuthor);
+		return books;
+	}
+	
+	public List<Book> findAll(String keyword) {
+		List<Book> books = bookRepository.findAll(keyword);
+		return books;
+	}
+	
+	@Override
+	public List<Book> searchBook(String keyword) {
+		List<Book> books = bookRepository.getBookByName(keyword);
+		System.out.println("keyword : " +keyword);
+		return books;
+	}
 
 	
 	@Override
@@ -98,8 +117,7 @@ public class BookService implements IBookService {
 		return new ResponseDTO("Book Removed"); 	
 	}
 	
-	
-	
+		
 //	@Scheduled(fixedRate = 5000)
 	private List<Book> getBookFromCsv() {
 		System.out.println("Fixed Rate Scheduler" +new Date());

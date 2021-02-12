@@ -18,8 +18,14 @@ public interface IBookService {
 	ResponseDTO addAllBook(String token);
 
 	ResponseDTO removeBook(int bookId, String token) throws BookException;
-	
-	List<Book> searchBookByNameAndAuthorAndDescriptionAndPrice(String );
+
+	List<Book> searchBook(String keyword);
+
+	List<Book> getBookByAuthor(String bookAuthor);
+
+	List<Book> findAll(String keyword);
+
+//	List<Book> getBooksByname(String bookName);
 
 
 }
