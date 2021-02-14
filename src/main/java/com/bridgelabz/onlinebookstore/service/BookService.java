@@ -7,22 +7,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.onlinebookstore.dto.BookDTO;
 import com.bridgelabz.onlinebookstore.dto.ResponseDTO;
 import com.bridgelabz.onlinebookstore.exception.BookException;
-import com.bridgelabz.onlinebookstore.exception.CartException;
 import com.bridgelabz.onlinebookstore.exception.UserException;
 import com.bridgelabz.onlinebookstore.model.Book;
-import com.bridgelabz.onlinebookstore.model.Cart;
 import com.bridgelabz.onlinebookstore.model.User;
 import com.bridgelabz.onlinebookstore.repository.BookRepository;
 import com.bridgelabz.onlinebookstore.repository.UserRepository;
@@ -65,9 +61,14 @@ public class BookService implements IBookService {
 
 
 	@Override
-	public List<Book> getAllBooks() {
+	public ResponseDTO getAllBooks() {
 		List<Book> books = bookRepository.findAll();
-		return books;
+		return new ResponseDTO("Book List" +books);
+	}
+	
+	public ResponseDTO searchBooks(String search) {
+		elasticService.searchBooks(search);
+		return new ResponseDTO("Search Result" );
 	}
 	
 	
@@ -83,14 +84,6 @@ public class BookService implements IBookService {
 	}
 	
 	@Override
-	public List<Book> searchBook(String keyword) {
-		List<Book> books = bookRepository.getBookByName(keyword);
-		System.out.println("keyword : " +keyword);
-		return books;
-	}
-
-	
-	@Override
 	public ResponseDTO addAllBook(String token) {
 		int id = Token.decodeToken(token);
 		System.out.println("Printing token" +id);
@@ -100,7 +93,8 @@ public class BookService implements IBookService {
 		List<Book> bookList = getBookFromCsv();
 		bookList.forEach(book -> {
 			book.setBookQuantity(5);
-			bookRepository.save(book);
+			Book books = bookRepository.save(book);
+			elasticService.add(books);
 		});
 		return new ResponseDTO("Books Added Successfully");	
 	} else {

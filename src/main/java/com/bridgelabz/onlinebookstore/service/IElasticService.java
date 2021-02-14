@@ -8,6 +8,8 @@ public interface IElasticService {
 	
 	Book add(Book book);
 
-//	List<Book> getAllBooks();
+	List<Book> searchBooks(String search);
+
+	List<Book> searchBooksByAuthor(String search);
 
 }
