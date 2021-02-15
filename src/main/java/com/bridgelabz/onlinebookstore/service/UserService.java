@@ -7,6 +7,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,6 +26,7 @@ import com.google.gson.Gson;
 @Service
 @PropertySource("classpath:status.properties")
 @CacheConfig(cacheNames = {"User"})
+@Profile(value= {"bookstore", "dev", "prod"})
 public class UserService implements IUserService {
 	
 	@Autowired
@@ -94,10 +96,11 @@ public class UserService implements IUserService {
 	
 	@Override
 //	@Scheduled(cron = "0/5 * * * * * ")
-	@Cacheable
+//	@Cacheable
 	public  List<User> getAllUser() {
 //		System.out.println("Testing cron" +new Date());
-		System.out.println("Getting user data from DB");
+		String message = environment.getProperty("dev.message");
+		System.out.println("Getting user data from " +message );
 		return userRepository.findAll();
 	}
 
