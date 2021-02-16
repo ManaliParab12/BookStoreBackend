@@ -44,11 +44,11 @@ public class BookController {
 		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
 
-//	@GetMapping("/searchBooks")
-//	public ResponseEntity<ResponseDTO> searchBooks(@RequestParam String search) {
-//		ResponseDTO responseDTO = bookService.searchBooks(search);
-//		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
-//	}
+	@GetMapping("/searchBooks")
+	public ResponseEntity<ResponseDTO> searchBooks(@RequestParam String search) {
+		ResponseDTO responseDTO = bookService.searchBooks(search);
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+	}
 
 	@GetMapping("/searchall")
 	public ResponseEntity<ResponseDTO> search(@RequestParam String keyword) {

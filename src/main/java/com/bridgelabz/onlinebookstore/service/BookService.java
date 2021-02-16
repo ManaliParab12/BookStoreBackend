@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class BookService implements IBookService {
 		book.setElasticId(UUID.randomUUID().toString());
 		if (user.getType().equalsIgnoreCase("admin")) {
 			book = bookRepository.save(book);
-//			elasticService.add(book);
+			elasticService.add(book);
 			return new ResponseDTO("Book Added Successfully");
 		} else {
 			return new ResponseDTO("You do not have permission to add book");
@@ -80,7 +81,7 @@ public class BookService implements IBookService {
 			bookList.forEach(book -> {
 				book.setBookQuantity(5);
 				Book books = bookRepository.save(book);
-//				elasticService.add(books);
+				elasticService.add(books);
 			});
 			return new ResponseDTO("Books Added Successfully");
 		} else {
@@ -88,16 +89,17 @@ public class BookService implements IBookService {
 		}
 	}
 
-//	public ResponseDTO searchBooks(String search) {
-//		System.out.println("books");
-//		return new ResponseDTO("Search Result", elasticService.searchBooksByAuthor(search));
-//	}
+	public ResponseDTO searchBooks(String search) {
+		System.out.println("books");
+		return new ResponseDTO("Search Result", elasticService.searchBooksByAuthor(search));
+	}
 
 	@Override
 	public List<Book> getBookByAuthor(String bookAuthor) {
 		List<Book> books = bookRepository.findByBookAuthor(bookAuthor);
 		return books;
 	}
+	
 
 	@Override
 	public ResponseDTO removeBook(int bookId, String token) throws BookException {

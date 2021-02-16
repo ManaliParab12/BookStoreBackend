@@ -26,7 +26,7 @@ import com.google.gson.Gson;
 @Service
 @PropertySource("classpath:status.properties")
 @CacheConfig(cacheNames = {"User"})
-@Profile(value= {"bookstore", "dev", "prod"})
+//@Profile(value= {"local", "dev", "prod"})
 public class UserService implements IUserService {
 	
 	@Autowired
