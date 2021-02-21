@@ -56,6 +56,7 @@ public class ElasticService implements IElasticService {
 		}
 		return book;
 	}
+	
 
 	@Override
 	public List<Book> searchBooksByAuthor(String search) {
