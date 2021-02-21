@@ -35,6 +35,10 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 	
+	@RequestMapping("/welcome")
+	public String welcome() {
+		return "Welcome to Book Store";
+	}
 
 	@GetMapping("/get")
 	public ResponseEntity<ResponseDTO> getUser() {
@@ -43,6 +47,7 @@ public class UserController {
 	     ResponseDTO responseDTO = new ResponseDTO("List of Users", userList);
 	     return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
+
 	
 	@ApiOperation("This Api is used for registering new user")
 	@PostMapping("/register")
@@ -51,29 +56,33 @@ public class UserController {
 		ResponseDTO responseDTO = userService.registerUser(userDTO);
         return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);		
 	}
+
 	
 	@PutMapping("/login")
 	public ResponseEntity<ResponseDTO> loginUser(@RequestBody UserDTO userDTO) {
 		ResponseDTO responseDTO = userService.userLogin(userDTO);
 		 return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);		
 	}
-		
+
+	
 	@GetMapping("/verify/{token}")
 	public ResponseEntity<ResponseDTO> verifyUser(@RequestHeader ("Token") String token){
         return new ResponseEntity<ResponseDTO>(userService.verifyUser(token), HttpStatus.OK);		
 	}
+
 	
 	@PutMapping("/update/{email}")
 	public ResponseEntity<ResponseDTO> updateUser(@Valid @RequestParam ("email") String email, UserDTO userDTO) {
 		 ResponseDTO responseDTO = userService.updateUser(email, userDTO);
 	     return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
+
 	
 	@PutMapping("/forget-password")
 	public ResponseEntity<ResponseDTO> sendResetPasswordMail(@Valid @RequestParam ("email") String email) {			
 	    ResponseDTO responseDTO = userService.forgetPassword(email);
 	    return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);	
-	 } 
+	} 
 
 	@PostMapping("/reset-password/{token}")
 	public ResponseEntity<ResponseDTO> resetPassword(@RequestHeader ("Token") String token, @RequestBody UserDTO userDTO ) {
