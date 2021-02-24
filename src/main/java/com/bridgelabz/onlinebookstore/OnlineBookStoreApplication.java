@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class OnlineBookStoreApplication {
 
 	public static void main(String[] args) {
+		System.out.println("Demo Jenkins");
 		SpringApplication.run(OnlineBookStoreApplication.class, args);
 	}
 }
