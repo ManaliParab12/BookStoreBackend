@@ -11,12 +11,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @Configuration
 public class SwaggerConfiguration {
-	
+
 	@Bean
 	public Docket configSwagger() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
-				.apis(RequestHandlerSelectors.basePackage("com.bridgelabz.onlinebookstore"))
-				//.paths(regex("/product.*"))
-				.build();
+				.apis(RequestHandlerSelectors.basePackage("com.bridgelabz.onlinebookstore")).build();
 	}
 }

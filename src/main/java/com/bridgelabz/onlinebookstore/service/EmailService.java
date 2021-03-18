@@ -9,19 +9,19 @@ import org.springframework.stereotype.Component;
 
 import com.bridgelabz.onlinebookstore.dto.EmailDTO;
 import com.google.gson.Gson;
-									
+
 @Component
-public class EmailService  {
+public class EmailService {
 
 	@Autowired
 	JavaMailSender mailSender;
-	
+
 	@Autowired
 	Gson gson;
-	
+
 	@Autowired
 	Queue queue;
-	
+
 	@RabbitListener(queues = "${rabbitmq.queue}")
 	public void sendMail(String email) {
 		SimpleMailMessage mailMessage = new SimpleMailMessage();

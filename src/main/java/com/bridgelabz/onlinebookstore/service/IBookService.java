@@ -1,13 +1,11 @@
 package com.bridgelabz.onlinebookstore.service;
 
-
 import java.util.List;
 
 import com.bridgelabz.onlinebookstore.dto.BookDTO;
 import com.bridgelabz.onlinebookstore.dto.ResponseDTO;
 import com.bridgelabz.onlinebookstore.exception.BookException;
 import com.bridgelabz.onlinebookstore.model.Book;
-
 
 public interface IBookService {
 
@@ -24,6 +22,5 @@ public interface IBookService {
 	List<Book> findAll(String keyword);
 
 	ResponseDTO searchBooks(String search);
-
 
 }

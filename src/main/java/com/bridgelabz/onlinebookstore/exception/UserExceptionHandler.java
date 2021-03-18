@@ -12,42 +12,35 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.bridgelabz.onlinebookstore.dto.ResponseDTO;
 
-
 @ControllerAdvice
 public class UserExceptionHandler {
-    private static final String message = "Exception while processing REST Request";
-	
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResponseDTO> handleMethodArgumentNotValidException(
-                                       MethodArgumentNotValidException exception) {
-        List<ObjectError> errorList = exception.getBindingResult().getAllErrors();
-        List<String> errMesg = errorList.stream()
-                                .map(objErr -> objErr.getDefaultMessage())
-                                .collect(Collectors.toList());
-        ResponseDTO responseDTO =
-                new ResponseDTO(message, errMesg);
-        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
-    }   
-    
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<ResponseDTO> handleUserException(
-                                        UserException exception ) {
-        ResponseDTO responseDTO = new ResponseDTO(message, 
-                                                 exception.getMessage());
-        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST); 
-    }
-    
-    @ExceptionHandler(BookException.class)
-    public ResponseEntity<ResponseDTO> handleBookException(
-    									BookException exception ) {
-        ResponseDTO responseDTO = new ResponseDTO(exception.getMessage());
-        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST); 
-    }
-    
-    @ExceptionHandler(CartException.class)
-    public ResponseEntity<ResponseDTO> handleCartException(
-    									CartException exception ) {
-        ResponseDTO responseDTO = new ResponseDTO(exception.getMessage());
-        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST); 
-    }
+	private static final String message = "Exception while processing REST Request";
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ResponseDTO> handleMethodArgumentNotValidException(
+			MethodArgumentNotValidException exception) {
+		List<ObjectError> errorList = exception.getBindingResult().getAllErrors();
+		List<String> errMesg = errorList.stream().map(objErr -> objErr.getDefaultMessage())
+				.collect(Collectors.toList());
+		ResponseDTO responseDTO = new ResponseDTO(message, errMesg);
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(UserException.class)
+	public ResponseEntity<ResponseDTO> handleUserException(UserException exception) {
+		ResponseDTO responseDTO = new ResponseDTO(message, exception.getMessage());
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(BookException.class)
+	public ResponseEntity<ResponseDTO> handleBookException(BookException exception) {
+		ResponseDTO responseDTO = new ResponseDTO(exception.getMessage());
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(CartException.class)
+	public ResponseEntity<ResponseDTO> handleCartException(CartException exception) {
+		ResponseDTO responseDTO = new ResponseDTO(exception.getMessage());
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.BAD_REQUEST);
+	}
 }

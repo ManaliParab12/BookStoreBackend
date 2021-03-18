@@ -31,10 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/user")
 @Slf4j
 public class UserController {
-	
+
 	@Autowired
 	private IUserService userService;
-	
+
 	@RequestMapping("/welcome")
 	public String welcome() {
 		return "Welcome to Book Store";
@@ -42,56 +42,52 @@ public class UserController {
 
 	@GetMapping("/get")
 	public ResponseEntity<ResponseDTO> getUser() {
-		 List<User> userList = userService.getAllUser();
-		 System.out.println("caching");
-	     ResponseDTO responseDTO = new ResponseDTO("List of Users", userList);
-	     return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+		List<User> userList = userService.getAllUser();
+		System.out.println("caching");
+		ResponseDTO responseDTO = new ResponseDTO("List of Users", userList);
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
 
-	
 	@ApiOperation("This Api is used for registering new user")
 	@PostMapping("/register")
-	public ResponseEntity<ResponseDTO> registerUser( @Valid @RequestBody UserDTO userDTO) {
-		log.debug("User DTO" +userDTO.toString());
+	public ResponseEntity<ResponseDTO> registerUser(@Valid @RequestBody UserDTO userDTO) {
+		log.debug("User DTO" + userDTO.toString());
 		ResponseDTO responseDTO = userService.registerUser(userDTO);
-        return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);		
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
 
-	
 	@PutMapping("/login")
 	public ResponseEntity<ResponseDTO> loginUser(@RequestBody UserDTO userDTO) {
 		ResponseDTO responseDTO = userService.userLogin(userDTO);
-		 return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);		
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
 
-	
-	@GetMapping("/verify/{token}")
-	public ResponseEntity<ResponseDTO> verifyUser(@RequestHeader ("Token") String token){
-        return new ResponseEntity<ResponseDTO>(userService.verifyUser(token), HttpStatus.OK);		
+	@GetMapping("/verify/{OTP}")
+	public ResponseEntity<ResponseDTO> verifyUser(@RequestHeader("email") String email, int otp) {
+		return new ResponseEntity<ResponseDTO>(userService.verifyOtp(email, otp), HttpStatus.OK);
 	}
 
-	
 	@PutMapping("/update/{email}")
-	public ResponseEntity<ResponseDTO> updateUser(@Valid @RequestParam ("email") String email, UserDTO userDTO) {
-		 ResponseDTO responseDTO = userService.updateUser(email, userDTO);
-	     return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+	public ResponseEntity<ResponseDTO> updateUser(@Valid @RequestParam("email") String email, UserDTO userDTO) {
+		ResponseDTO responseDTO = userService.updateUser(email, userDTO);
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
 
-	
 	@PutMapping("/forget-password")
-	public ResponseEntity<ResponseDTO> sendResetPasswordMail(@Valid @RequestParam ("email") String email) {			
-	    ResponseDTO responseDTO = userService.forgetPassword(email);
-	    return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);	
-	} 
+	public ResponseEntity<ResponseDTO> sendResetPasswordMail(@Valid @RequestParam("email") String email) {
+		ResponseDTO responseDTO = userService.forgetPassword(email);
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+	}
 
 	@PostMapping("/reset-password/{token}")
-	public ResponseEntity<ResponseDTO> resetPassword(@RequestHeader ("Token") String token, @RequestBody UserDTO userDTO ) {
+	public ResponseEntity<ResponseDTO> resetPassword(@RequestHeader("Token") String token,
+			@RequestBody UserDTO userDTO) {
 		return new ResponseEntity<ResponseDTO>(userService.updatePassword(token, userDTO), HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping("/remove/{email}")
-	public ResponseEntity<ResponseDTO> removeUser(@RequestParam ("email") String email) {
+	public ResponseEntity<ResponseDTO> removeUser(@RequestParam("email") String email) {
 		ResponseDTO responseDTO = userService.deleteUser(email);
-	    return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 	}
 }

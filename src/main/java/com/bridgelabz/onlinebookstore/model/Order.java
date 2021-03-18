@@ -16,27 +16,28 @@ import lombok.Data;
 @Entity
 @Table(name = "order_table")
 public @Data class Order {
-	
+
 	@Id
 	@GeneratedValue
 	private int id;
-	
+
 	private int quantity;
-	
-	private int  totalPrice;
-	
+
+	private int totalPrice;
+
 	private LocalDate date;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "book_id")
+	@JoinColumn(name = "book_id")
 	private Book book;
 
-	public Order() {}
-	
+	public Order() {
+	}
+
 	public Order(OrderDTO orderDTO) {
 		this.quantity = orderDTO.quantity;
 		this.totalPrice = orderDTO.totalPrice;
@@ -45,5 +46,4 @@ public @Data class Order {
 		this.user = orderDTO.user;
 	}
 
-	
 }

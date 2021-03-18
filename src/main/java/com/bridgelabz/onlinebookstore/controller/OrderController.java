@@ -16,22 +16,22 @@ import com.bridgelabz.onlinebookstore.service.IOrderService;
 @RestController
 @RequestMapping("/order")
 public class OrderController {
-	
+
 	@Autowired
 	IOrderService orderService;
-	
+
 	@PostMapping("/add")
-    public ResponseEntity<ResponseDTO> addOrder( @RequestHeader("Email") String email, @RequestBody OrderDTO orderDTO) {
-		ResponseDTO responseDTO = orderService.addOrder( email, orderDTO);
-		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);	
-    }	
-	
+	public ResponseEntity<ResponseDTO> addOrder(@RequestHeader("Email") String email, @RequestBody OrderDTO orderDTO) {
+		ResponseDTO responseDTO = orderService.addOrder(email, orderDTO);
+		return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+	}
+
 	@GetMapping("/get")
 	public ResponseEntity<ResponseDTO> getUserOrders(@RequestHeader("Email") String email) {
 		ResponseDTO responseDTO = orderService.getUserOrders(email);
-	    return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+		return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/all")
 	public ResponseEntity<ResponseDTO> getAllOrders() {
 		ResponseDTO responseDTO = orderService.getAllOrders();

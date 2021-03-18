@@ -15,36 +15,36 @@ import lombok.Data;
 
 @Entity
 @Table(name = "book")
-public @Data  class Book {
-	
+public @Data class Book {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "book_id")
 	private int id;
-	
+
 	@CsvBindByName(column = "title")
 	private String bookName;
-	
+
 	@CsvBindByName(column = "author")
 	private String bookAuthor;
-	
+
 	@CsvBindByName(column = "image")
 	private String bookImage;
-	
+
 	private int bookQuantity;
-	
+
 	@CsvBindByName(column = "price")
 	private double bookPrice;
-	
-	@CsvBindByName(column = "description")
-	@Column(length = 3000) 
-	private String bookDescription;
-	
-	private String elasticId;
-	
 
-	public Book() { }
-	
+	@CsvBindByName(column = "description")
+	@Column(length = 3000)
+	private String bookDescription;
+
+	private String elasticId;
+
+	public Book() {
+	}
+
 	public Book(BookDTO bookDTO) {
 		this.bookName = bookDTO.bookName;
 		this.bookAuthor = bookDTO.bookAuthor;
@@ -52,9 +52,10 @@ public @Data  class Book {
 		this.bookQuantity = bookDTO.bookQuantity;
 		this.bookPrice = bookDTO.bookPrice;
 		this.bookDescription = bookDTO.bookDescription;
-	}	
-	
-	public Book(int id, String bookName, String bookAuthor, String bookImage, int bookQuantity, double bookPrice, String bookDescription) {
+	}
+
+	public Book(int id, String bookName, String bookAuthor, String bookImage, int bookQuantity, double bookPrice,
+			String bookDescription) {
 		this.id = id;
 		this.bookName = bookName;
 		this.bookAuthor = bookAuthor;

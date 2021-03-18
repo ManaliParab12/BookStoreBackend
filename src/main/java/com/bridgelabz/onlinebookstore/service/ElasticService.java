@@ -56,14 +56,12 @@ public class ElasticService implements IElasticService {
 		}
 		return book;
 	}
-	
 
 	@Override
 	public List<Book> searchBooksByAuthor(String search) {
 		BoolQueryBuilder boolBuilder = new BoolQueryBuilder();
 		QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-						.must(QueryBuilders.queryStringQuery("*" + search + "*")
-						.analyzeWildcard(true).field("bookAuthor"));
+				.must(QueryBuilders.queryStringQuery("*" + search + "*").analyzeWildcard(true).field("bookAuthor"));
 		boolBuilder.must(queryBuilder);
 		SearchRequest searchRequest = new SearchRequest(INDEX);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -97,18 +95,16 @@ public class ElasticService implements IElasticService {
 		}
 	}
 
-	
 	@Override
 	public Book updateBookById(String id, Book book) {
-		UpdateRequest updateRequest = new UpdateRequest(INDEX, TYPE, id)
-				.fetchSource(true);
+		UpdateRequest updateRequest = new UpdateRequest(INDEX, TYPE, id).fetchSource(true);
 		try {
 			String bookJson = objectMapper.writeValueAsString(book);
 			updateRequest.doc(bookJson, XContentType.JSON);
 			UpdateResponse updateResponse = highLevelClient.update(updateRequest, RequestOptions.DEFAULT);
 			System.out.println(updateResponse.status());
 		} catch (IOException e) {
-		e.printStackTrace();
+			e.printStackTrace();
 		}
 		return book;
 	}

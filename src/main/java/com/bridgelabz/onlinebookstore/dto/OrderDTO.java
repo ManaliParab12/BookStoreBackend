@@ -8,9 +8,9 @@ import com.bridgelabz.onlinebookstore.model.User;
 import lombok.Data;
 
 public @Data class OrderDTO {
-	public int quantity;	
-	public int  totalPrice;	
-	public LocalDate date;	
+	public int quantity;
+	public int totalPrice;
+	public LocalDate date;
 	public User user;
 	public Book book;
 

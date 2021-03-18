@@ -9,13 +9,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ElasticConfiguration {
 
-	
 	@Bean
-    public RestHighLevelClient client() {
-        RestHighLevelClient client = new RestHighLevelClient(
-            RestClient.builder(new HttpHost("localhost", 9200, "http")));
-        return client;
-    }
+	public RestHighLevelClient client() {
+		RestHighLevelClient client = new RestHighLevelClient(
+				RestClient.builder(new HttpHost("localhost", 9200, "http")));
+		return client;
+	}
 }
-
-//(destroyMethod = "close")

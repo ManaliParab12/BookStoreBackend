@@ -1,3 +1,7 @@
+
+
+
+
 package com.bridgelabz.onlinebookstore.service;
 
 import java.time.LocalDate;
@@ -21,60 +25,54 @@ import com.bridgelabz.onlinebookstore.repository.OrderRepository;
 import com.bridgelabz.onlinebookstore.repository.UserRepository;
 import com.google.gson.Gson;
 
-
 @Service
 @PropertySource("classpath:status.properties")
 public class OrderService implements IOrderService {
-	
+
 	@Autowired
 	private Environment environment;
-	
+
 	@Autowired
 	OrderRepository orderRepository;
-	
-    @Autowired
-    UserRepository userRepository;
-    
-	 @Autowired
-	 private RabbitTemplate rabbitTemplate;
-	 
-	 @Autowired
-	 private Binding bind;
-	 
-	 @Autowired
-	 private Gson gson;
-	 
+
+	@Autowired
+	UserRepository userRepository;
+
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
+
+	@Autowired
+	private Binding bind;
+
+	@Autowired
+	private Gson gson;
 
 	@Override
-	public ResponseDTO addOrder(String email, OrderDTO orderDTO ) {
+	public ResponseDTO addOrder(String email, OrderDTO orderDTO) {
 		orderDTO.setUser(userRepository.findByEmail(email)
-									   .orElseThrow(() ->  new UserException(environment.getProperty("status.login.error.message"))));
+				.orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message"))));
 		orderDTO.setDate(LocalDate.now());
 		ModelMapper modelMapper = new ModelMapper();
 		Order order = modelMapper.map(orderDTO, Order.class);
 		User user = orderRepository.save(order).getUser();
 		rabbitTemplate.convertAndSend(bind.getExchange(), bind.getRoutingKey(),
-				gson.toJson(new EmailDTO(user.getEmail(), "Order Confirmed", "Hello " +user.getFirstName() + " "
-																					  +user.getLastName() 
-																					  + "\n Your Order has been placed successfully!"  
-																					  + "\nOrder Details " 
-																					  + "\nOrder date : " +order.getDate()
-																					  + "\nOrder Id : #12345" 
-																					  + "Thank You")));
+				gson.toJson(new EmailDTO(user.getEmail(), "Order Confirmed",
+						"Hello " + user.getFirstName() + " " + user.getLastName()
+								+ "\n Your Order has been placed successfully!" + "\nOrder Details " + "\nOrder date : "
+								+ order.getDate() + "\nOrder Id : #12345" + "Thank You")));
 		return new ResponseDTO("Your Order has been placed successfully!");
-	}	 
-
-		
-	@Override
-	public ResponseDTO  getUserOrders(String email) {
-		List<Order> order = orderRepository.findAllOrdersByUser(userRepository.findByEmail(email)
-	    							 .orElseThrow(() ->  new UserException(environment.getProperty("status.login.error.message"))));
-		return new ResponseDTO("Your Orders" +order);
 	}
-	
+
 	@Override
-    public ResponseDTO  getAllOrders() {
+	public ResponseDTO getUserOrders(String email) {
+		List<Order> order = orderRepository.findAllOrdersByUser(userRepository.findByEmail(email)
+				.orElseThrow(() -> new UserException(environment.getProperty("status.login.error.message"))));
+		return new ResponseDTO("Your Orders" + order);
+	}
+
+	@Override
+	public ResponseDTO getAllOrders() {
 		List<Order> order = orderRepository.findAll();
-		return new ResponseDTO("Your Orders" +order);
-    }
+		return new ResponseDTO("Your Orders" + order);
+	}
 }

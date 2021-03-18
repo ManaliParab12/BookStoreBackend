@@ -99,7 +99,6 @@ public class BookService implements IBookService {
 		List<Book> books = bookRepository.findByBookAuthor(bookAuthor);
 		return books;
 	}
-	
 
 	@Override
 	public ResponseDTO removeBook(int bookId, String token) throws BookException {

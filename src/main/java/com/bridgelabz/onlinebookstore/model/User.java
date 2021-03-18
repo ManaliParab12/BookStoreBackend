@@ -1,8 +1,8 @@
 
 package com.bridgelabz.onlinebookstore.model;
 
-
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 
 import com.bridgelabz.onlinebookstore.dto.UserDTO;
 
@@ -24,32 +23,40 @@ public @Data @ToString class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id")
-    private int id;
-	
-	@Column(name = "first_name")
-    private String firstName;
-	
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    private String address;
-    private String password;
-    private boolean isVerify;
-    private String type;
+	private int id;
 
-    public User() {}
-       
+	@Column(name = "first_name")
+	private String firstName;
+
+	private String lastName;
+	private String email;
+	private String phoneNumber;
+	private String address;
+	private String password;
+	private boolean isVerify;
+	private String type;
+
+	@Column(name = "one_time_password")
+	private int oneTimePassword;
+
+	@Column(name = "expiry_time")
+	private Date expiryTime;
+
+	public User() {
+	}
+
 	public User(UserDTO userDTO) {
-	    this.updateUser(userDTO);
-	    }
+		this.updateUser(userDTO);
+	}
 
 	public void updateUser(UserDTO userDTO) {
-		 this.firstName = userDTO.firstName;
-		 this.lastName = userDTO.lastName;
-		 this.email = userDTO.email;
-		 this.phoneNumber = userDTO.phoneNumber;
-		 this.address = userDTO.address;
-		 this.password = userDTO.password;
-		 this.type = userDTO.type;		
+		this.firstName = userDTO.firstName;
+		this.lastName = userDTO.lastName;
+		this.email = userDTO.email;
+		this.phoneNumber = userDTO.phoneNumber;
+		this.address = userDTO.address;
+		this.password = userDTO.password;
+		this.type = userDTO.type;
 	}
+
 }

@@ -15,14 +15,10 @@ import com.bridgelabz.onlinebookstore.model.User;
 public interface CartRepository extends JpaRepository<Cart, Integer> {
 
 	Optional<Cart> findByBookAndUser(Book book, User user);
-	
+
 	List<Cart> findAllBooksByUser(User user);
 
 	Cart deleteAllBooksByUser(User user);
-
-	
-//	@Query(value="delete from user, cart where user_id = id and user_id = :user_id", nativeQuery = true)
-	Optional<Cart> deleteByUser(User user);
 
 	void deleteCartByUser(User user);
 }

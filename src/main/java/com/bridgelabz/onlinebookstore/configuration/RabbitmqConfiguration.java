@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitmqConfiguration {
-	
+
 	@Value("${rabbitmq.queue}")
 	private String queueName;
-	
+
 	@Value("${rabbitmq.exchange}")
 	private String exchangeKey;
-	
+
 	@Value("${rabbitmq.routingkey}")
 	private String routingKey;
 
@@ -24,12 +24,12 @@ public class RabbitmqConfiguration {
 	public Queue createQueue() {
 		return new Queue(queueName, true);
 	}
-	
+
 	@Bean
 	public DirectExchange createExchange() {
 		return new DirectExchange(exchangeKey);
 	}
-	
+
 	@Bean
 	public Binding createRoutingKey(Queue queue, DirectExchange exchangeType) {
 		return BindingBuilder.bind(queue).to(exchangeType).with(routingKey);
